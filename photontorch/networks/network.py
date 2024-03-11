@@ -1,4 +1,4 @@
-""" Photontorch network
+f""" Photontorch network
 
 The Network is the core of Photontorch: it is where everything comes together.
 
@@ -72,7 +72,7 @@ class Network(Component):
     # network properties
     @property
     def num_ports(self):
-        """ number of ports in the network """
+        """number of ports in the network"""
         return sum(comp.num_ports for comp in self.components.values())
 
     # Network creation methods
@@ -253,7 +253,7 @@ class Network(Component):
 
     # helper function to link components together
     def _get_used_component_names(self):
-        """ get names of components that are actually used in the network's connections """
+        """get names of components that are actually used in the network's connections"""
 
         def is_int(s):
             try:
@@ -277,7 +277,7 @@ class Network(Component):
         return used_components.keys()
 
     def _set_buffers(self):
-        """ create all buffers for the network """
+        """create all buffers for the network"""
 
         # if not connections defined, exit early.
         if not self.connections:
@@ -779,7 +779,7 @@ class Network(Component):
             det, buffer = self.step(t, source[:, i], buffer)
 
             if power:
-                detected[i] = torch.sum(det ** 2, 0)
+                detected[i] = torch.sum(det**2, 0)
             else:
                 detected[:, i] = det
 
@@ -838,7 +838,7 @@ class Network(Component):
         return detected, buffer
 
     def action(self, t, x_in, x_out):
-        """ Perform the action of an active components in the network """
+        """Perform the action of an active components in the network"""
         x_out[:] = x_in[:]
 
         idx = self.num_sources
@@ -852,35 +852,35 @@ class Network(Component):
             idx += comp.num_ports
 
     def set_S(self, S):
-        """ get the combined S-matrix of all the components in the network """
+        """get the combined S-matrix of all the components in the network"""
         idx = 0
         for comp in self.components.values():
             comp.set_S(S[:, :, idx : idx + comp.num_ports, idx : idx + comp.num_ports])
             idx += comp.num_ports
 
     def set_delays(self, delays):
-        """ set all the delays in the network """
+        """set all the delays in the network"""
         idx = 0
         for comp in self.components.values():
             comp.set_delays(delays[idx : idx + comp.num_ports])
             idx += comp.num_ports
 
     def set_detectors_at(self, detectors_at):
-        """ set the locations of the detectors in the network """
+        """set the locations of the detectors in the network"""
         idx = 0
         for comp in self.components.values():
             comp.set_detectors_at(detectors_at[idx : idx + comp.num_ports])
             idx += comp.num_ports
 
     def set_sources_at(self, sources_at):
-        """ set the locations of the sources in the network """
+        """set the locations of the sources in the network"""
         idx = 0
         for comp in self.components.values():
             comp.set_sources_at(sources_at[idx : idx + comp.num_ports])
             idx += comp.num_ports
 
     def set_actions_at(self, actions_at):
-        """ set the locations of the functions in the network """
+        """set the locations of the functions in the network"""
         idx = 0
         for comp in self.components.values():
             comp.set_actions_at(actions_at[idx : idx + comp.num_ports])
@@ -938,7 +938,7 @@ class Network(Component):
                 C[i, j] = C[j, i] = 1.0
 
     def set_port_order(self, port_order):
-        """ set the reordering indices for the ports of the network """
+        """set the reordering indices for the ports of the network"""
 
         # TODO: this method needs refactoring
 
@@ -1026,21 +1026,21 @@ class Network(Component):
         return graph(self, draw=True)
 
     def __setattr__(self, name, attr):
-        """ set attributes of the network """
+        """set attributes of the network"""
         if isinstance(attr, Component):
             self.add_component(name, attr)
         else:
             super(Network, self).__setattr__(name, attr)
 
     def __enter__(self):
-        """ enter the with block """
+        """enter the with block"""
         # and add to _current_networks, so the components and networks will
         # be updated with the "link" function
         _current_networks.appendleft(self)
         return self
 
     def __exit__(self, error, value, traceback):
-        """ exit the with block """
+        """exit the with block"""
         if error is not None:
             raise  # raise the last error thrown
         del _current_networks[0]
@@ -1053,7 +1053,7 @@ class Network(Component):
 
 
 def current_network():
-    """ get the current network being defined """
+    """get the current network being defined"""
     if _current_networks:
         return _current_networks[0]
 

@@ -22,7 +22,6 @@ defining the behavior of the component in a network.
 
 """
 
-
 ## Components
 
 # Component
@@ -47,6 +46,7 @@ from .mmis import Mmi
 
 # MZIs
 from .mzis import Mzi
+from .mzij import Mzij
 
 # Waveguides
 from .waveguides import Waveguide

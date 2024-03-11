@@ -56,6 +56,7 @@ from .components.mmis import Mmi
 
 # MZIs
 from .components.mzis import Mzi
+from .components.mzij import Mzij
 
 # Waveguides
 from .components.waveguides import Waveguide
