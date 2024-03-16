@@ -1,6 +1,5 @@
 """ neural network (nn) extensions """
 
-
 #############
 ## Imports ##
 #############
@@ -27,7 +26,7 @@ from ..environment.environment import current_environment
 
 
 class Buffer(torch.Tensor):
-    """ A Buffer is a Module Variable which is automatically registered in _buffers
+    """A Buffer is a Module Variable which is automatically registered in _buffers
 
     Each Module has an OrderedDict named _buffers. In this Dictionary, all
     model related parameters that do not require optimization are stored.
@@ -57,7 +56,7 @@ class Buffer(torch.Tensor):
 
 
 class BoundedParameter(torch.nn.Parameter):
-    """ A BoundedParameter is special Parameter that is bounded between a range.
+    """A BoundedParameter is special Parameter that is bounded between a range.
 
     Under the hood it registers an unbounded weight in our
     photontorch.nn.Module and a class property calculating the desired
@@ -131,7 +130,7 @@ class BoundedParameter(torch.nn.Parameter):
 
 
 class Module(_Module_):
-    """ Torch.nn Module extension with some extra features. """
+    """Torch.nn Module extension with some extra features."""
 
     def __init__(self):
         super(Module, self).__init__()
@@ -162,11 +161,11 @@ class Module(_Module_):
 
     @property
     def is_cuda(self):
-        """ check if the model parameters live on the GPU """
+        """check if the model parameters live on the GPU"""
         return False if self.device.type == "cpu" else True
 
     def to(self, *args, **kwargs):
-        """ move the module to a device (cpu or cuda) """
+        """move the module to a device (cpu or cuda)"""
         new = super(Module, self).to(*args, **kwargs)
         for k, v in self._modules.items():
             self._modules[k] = v.to(*args, **kwargs)
@@ -177,11 +176,11 @@ class Module(_Module_):
         return new
 
     def cpu(self):
-        """ Transform the Module to live on the CPU """
+        """Transform the Module to live on the CPU"""
         return self.to(device="cpu")
 
     def cuda(self, device=None):
-        """ Transform the Module to live on the GPU
+        """Transform the Module to live on the GPU
 
         Args:
             device (int): index of the GPU device.
@@ -344,7 +343,7 @@ class BitStreamGenerator(Module):
 
 
 def _broadcast_prediction_target(prediction, target):
-    """ broadcast prediction and target in identical shapes
+    """broadcast prediction and target in identical shapes
 
     Args:
         prediction (Tensor): prediction
@@ -372,7 +371,7 @@ def _broadcast_prediction_target(prediction, target):
 
 
 class _Loss(Module):
-    """ Base class for loss function extensions. """
+    """Base class for loss function extensions."""
 
     def __init__(self, latency=0.0, warmup=0, bitrate=40e9, samplerate=160e9):
         """
@@ -397,7 +396,7 @@ class _Loss(Module):
         bitrate=None,
         samplerate=None,
     ):
-        """ Calculate loss
+        """Calculate loss
         Args:
             prediction (Tensor): prediction power tensor. Should be broadcastable to tensor with shape (# timesteps, # wavelengths, # readouts, # batches)
             target (Tensor): target power tensor. Should be broadcastable to the same shape as prediction.
@@ -429,7 +428,7 @@ class _Loss(Module):
         show=False,
         **kwargs
     ):
-        """ Plot prediction and target
+        """Plot prediction and target
         Args:
             x (Tensor): Should be broadcastable to tensor with shape (# timesteps, # wavelengths, # readouts, # batches)
             latency (optional, float): [bits] override fractional latency in bit lengths. This value can be a floating point number bigger than 1.
@@ -493,7 +492,7 @@ class _Loss(Module):
 
 
 class MSELoss(_Loss):
-    """ Mean Squared Error for bitstreams """
+    """Mean Squared Error for bitstreams"""
 
     def forward(
         self,
@@ -544,7 +543,7 @@ class MSELoss(_Loss):
 
 
 class BERLoss(_Loss):
-    """ Bit Error Rate (non-differentiable)"""
+    """Bit Error Rate (non-differentiable)"""
 
     def __init__(
         self, threshold=0.5, latency=0.0, warmup=0, bitrate=40e9, samplerate=160e9
@@ -572,7 +571,7 @@ class BERLoss(_Loss):
         bitrate=None,
         samplerate=None,
     ):
-        """ Calculate loss
+        """Calculate loss
         Args:
             prediction (Tensor): prediction power tensor. Should be broadcastable to tensor with shape (# timesteps, # wavelengths, # readouts, # batches)
             target (Tensor): target power tensor. Should be broadcastable to the same shape as prediction.

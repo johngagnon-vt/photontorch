@@ -26,7 +26,7 @@ from ..environment import current_environment
 
 
 class LinearSoa(Component):
-    """ A Linear SOA is a memory-less component with one input and one output.
+    """A Linear SOA is a memory-less component with one input and one output.
 
     It amplifies a signal instantaneously and linearly with the specified amplification factor
 
@@ -60,7 +60,7 @@ class LinearSoa(Component):
 
 
 class BaseSoa(Component):
-    """ The BaseSoa is a memory-containing component with one input and one output.
+    """The BaseSoa is a memory-containing component with one input and one output.
 
     It amplifies a signal according to its internal state, which in turn is
     modified by its rate equation.
@@ -74,7 +74,7 @@ class BaseSoa(Component):
     num_ports = 3
 
     def action(self, t, x_in, x_out):
-        """ Nonlinear action of the component on its active nodes
+        """Nonlinear action of the component on its active nodes
 
         Args:
             t (float): the current time in the simulation
@@ -98,7 +98,7 @@ class BaseSoa(Component):
         # x_out[2] = a_in*(1 + 0.5*h + 0.25*0.5*h**2 + 0.125*(1.0/6.0)*h**3)
 
     def dhdt(self, t, h, a):
-        """ Derivative of the internal state h with respect to time
+        """Derivative of the internal state h with respect to time
 
         Args:
             t (float): the current time in the simulation
@@ -128,7 +128,7 @@ class BaseSoa(Component):
 
 
 class Soa(BaseSoa):
-    """ The Soa is a memory-containing component with one input and one output.
+    """The Soa is a memory-containing component with one input and one output.
 
     It amplifies a signal according to its internal state, which in turn is
     modified by its rate equation.
@@ -168,7 +168,7 @@ class Soa(BaseSoa):
 
 
 class AgrawalSoa(BaseSoa):
-    """ The AgrawalSoa is a memory-containing component with one input and one output.
+    """The AgrawalSoa is a memory-containing component with one input and one output.
 
     It amplifies a signal according to its internal state, which in turn is modified by
     its rate equation defined by Agrawal et. al.
@@ -267,7 +267,7 @@ class AgrawalSoa(BaseSoa):
 
     def dhdt(self, t, h, a):
         # input power
-        P = torch.sum(a ** 2, 0)
+        P = torch.sum(a**2, 0)
 
         # real part of internal state
         h_real = h[0]

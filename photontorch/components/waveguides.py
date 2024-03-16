@@ -20,7 +20,7 @@ from ..nn.nn import Parameter, Buffer
 
 
 class Waveguide(Connection):
-    """ Waveguides connect two ports with a delay and a phase.
+    """Waveguides connect two ports with a delay and a phase.
 
     A waveguide is a Component where each of the two nodes
     introduces a delay corresponding to the length of the waveguide.

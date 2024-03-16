@@ -232,13 +232,20 @@ def test_network_plot(gen, tenv, fenv):
 
         # test time mode 6
         detected = torch.rand(
-            env.num_t, tnw.num_detectors, 11, generator=gen,
+            env.num_t,
+            tnw.num_detectors,
+            11,
+            generator=gen,
         )  # this one is not covered?
         tnw.plot(detected)
 
         # test time mode 6
         detected = torch.rand(
-            env.num_t, env.num_wl, tnw.num_detectors, 11, generator=gen,
+            env.num_t,
+            env.num_wl,
+            tnw.num_detectors,
+            11,
+            generator=gen,
         )
         tnw.plot(detected)
 

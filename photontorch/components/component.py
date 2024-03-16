@@ -23,20 +23,20 @@ from ..environment import current_environment
 
 
 class Component(Module):
-    """ Generic base component.
+    """Generic base component.
 
-        The base component is a parent class meant for subclassing;
-        it should not be used directly.
+    The base component is a parent class meant for subclassing;
+    it should not be used directly.
 
-        To define your own component, subclass Component and overwrite the
-        __init__ and the set_* methods.
+    To define your own component, subclass Component and overwrite the
+    __init__ and the set_* methods.
     """
 
     num_ports = 0
     """ Number of ports of the component. """
 
     def __init__(self, name=None):
-        """ Component
+        """Component
 
         Args:
             name (optional, str): the name of the component
@@ -56,7 +56,7 @@ class Component(Module):
         self._set_buffers()
 
     def _set_buffers(self):
-        """ create all buffers for the component """
+        """create all buffers for the component"""
         self.C = Buffer(
             torch.zeros((self.num_ports, self.num_ports), device=self.device)
         )
@@ -107,7 +107,7 @@ class Component(Module):
     ## The following methods should be overwritten by subclasses:
 
     def set_S(self, S):
-        """ Set the elements of the scattering matrix.
+        """Set the elements of the scattering matrix.
 
         Args:
             S (Tensor[2, #wavelengths, #ports, #ports]): the empty scattering
@@ -119,7 +119,7 @@ class Component(Module):
         pass
 
     def set_C(self, C):
-        """ Set the connection matrix of the component.
+        """Set the connection matrix of the component.
 
         Args:
             C (Tensor[2, #ports, #ports]): the empty connection matrix for the
@@ -135,7 +135,7 @@ class Component(Module):
         pass
 
     def set_delays(self, delays):
-        """ Set the delays introduced by the component.
+        """Set the delays introduced by the component.
 
         Args:
             delays (Tensor[#ports]): the empty delay tensor for the component to
@@ -145,7 +145,7 @@ class Component(Module):
         pass
 
     def set_sources_at(self, sources_at):
-        """ Set the locations of the source ports in the component.
+        """Set the locations of the source ports in the component.
 
         Args:
             sources_at (Tensor[#ports]): the empty boolean tensor for the component to
@@ -155,7 +155,7 @@ class Component(Module):
         pass
 
     def set_detectors_at(self, detectors_at):
-        """ Set the locations of the detector ports in the component.
+        """Set the locations of the detector ports in the component.
 
         Args:
             detectors_at (Tensor[#ports]): the empty boolean tensor for the component to
@@ -165,7 +165,7 @@ class Component(Module):
         pass
 
     def set_actions_at(self, actions_at):
-        """ Set the locations of the active ports in the component.
+        """Set the locations of the active ports in the component.
 
         Args:
             actions_at (Tensor[#ports]): the empty boolean tensor for the component to
@@ -175,7 +175,7 @@ class Component(Module):
         pass
 
     def set_port_order(self, port_order):
-        """ Set the port ordering
+        """Set the port ordering
 
         Args:
             port_order (Tensor[#ports]): the indices denoting the port order.
@@ -190,7 +190,7 @@ class Component(Module):
         )
 
     def action(self, t, x_in, x_out):
-        """ Nonlinear action of the component on its active nodes
+        """Nonlinear action of the component on its active nodes
 
         Args:
             t (float): the current time in the simulation
@@ -207,11 +207,11 @@ class Component(Module):
 
     @property
     def env(self):
-        """ Get the environment object for which the component is initialized """
+        """Get the environment object for which the component is initialized"""
         return self._env
 
     def initialize(self):
-        """ initialize the component with the current simulation environment.
+        """initialize the component with the current simulation environment.
 
         Before a component can be used for simulation, it should be initialized with a
         simulation environment.
@@ -221,14 +221,14 @@ class Component(Module):
         return self
 
     def __repr__(self):
-        """ String Representation of the component """
+        """String Representation of the component"""
         s = self.__class__.__name__
         if self.name is not None:
             s = s + '(name="' + self.name + '")'
         return s
 
     def __str__(self):
-        """ String Representation of the component """
+        """String Representation of the component"""
         return repr(self)
 
 

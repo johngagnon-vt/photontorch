@@ -31,10 +31,14 @@ from ..nn.nn import Buffer, Parameter
 
 
 class _MixingPhaseArrayRings(Network):
-    """ helper network for RingNetwork """
+    """helper network for RingNetwork"""
 
     def __init__(
-        self, N, wg_factory=_wg_factory, mzi_factory=_mzi_factory, name=None,
+        self,
+        N,
+        wg_factory=_wg_factory,
+        mzi_factory=_mzi_factory,
+        name=None,
     ):
         """
         Args:
@@ -74,21 +78,25 @@ class _MixingPhaseArrayRings(Network):
 
 
 class _UnclosedRingArray(Network):
-    r""" Helper network for RingNetwork::
+    r"""Helper network for RingNetwork::
 
-        <- cap==2 ->
-        0__  ______0
+    <- cap==2 ->
+    0__  ______0
+       \/
+    1__/\__  __1
            \/
-        1__/\__  __1
-               \/
-        2__  __/\__2
-           \/
-        3__/\______3
+    2__  __/\__2
+       \/
+    3__/\______3
 
     """
 
     def __init__(
-        self, N=2, wg_factory=_wg_factory, mzi_factory=_mzi_factory, name=None,
+        self,
+        N=2,
+        wg_factory=_wg_factory,
+        mzi_factory=_mzi_factory,
+        name=None,
     ):
         """
         Args:
@@ -138,7 +146,7 @@ class _UnclosedRingArray(Network):
 
 
 class RingNetwork(Network):
-    r""" A ring network
+    r"""A ring network
 
     By changing the orientation of some of the MZIs in the Clements Network, a ring
     network can be obtained.
@@ -207,7 +215,7 @@ class RingNetwork(Network):
         super(RingNetwork, self).__init__(components, connections, name=name)
 
     def terminate(self, term=None):
-        """ Terminate open conections with the term of your choice
+        """Terminate open conections with the term of your choice
 
         Args:
             term: (Term|list|dict): Which term to use. Defaults to Term. If a

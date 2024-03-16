@@ -17,6 +17,7 @@ from fixtures import gen, nw as mod
 ## Tests ##
 ###########
 
+
 ## Neural Networks
 def test_module_creation(mod):
     pass

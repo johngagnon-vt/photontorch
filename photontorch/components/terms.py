@@ -26,7 +26,7 @@ from .component import Component
 ## Termination ##
 #################
 class Term(Component):
-    """ A term is a memory-less component with a single input.
+    """A term is a memory-less component with a single input.
 
     It terminates an unconnected node.
 

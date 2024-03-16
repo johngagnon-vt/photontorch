@@ -5,6 +5,7 @@ Reference:
     https://www.osapublishing.org/optica/fulltext.cfm?uri=optica-3-12-1460&id=355743
 
 """
+
 #############
 ## Imports ##
 #############
@@ -37,10 +38,13 @@ def _mzi_factory():
 
 
 class _PhaseArray(Network):
-    """ helper network for ClementsNxN """
+    """helper network for ClementsNxN"""
 
     def __init__(
-        self, N, wg_factory=_wg_factory, name=None,
+        self,
+        N,
+        wg_factory=_wg_factory,
+        name=None,
     ):
         """
         Args:
@@ -64,10 +68,14 @@ class _PhaseArray(Network):
 
 
 class _MixingPhaseArrayClements(Network):
-    """ helper network for ClementsNxN """
+    """helper network for ClementsNxN"""
 
     def __init__(
-        self, N, wg_factory=_wg_factory, mzi_factory=_mzi_factory, name=None,
+        self,
+        N,
+        wg_factory=_wg_factory,
+        mzi_factory=_mzi_factory,
+        name=None,
     ):
         """
         Args:
@@ -113,21 +121,25 @@ class _MixingPhaseArrayClements(Network):
 
 
 class _Capacity2ClementsNxN(Network):
-    r""" Helper network for ClementsNxN::
+    r"""Helper network for ClementsNxN::
 
-        <- cap==2 ->
-        0__  ______0
+    <- cap==2 ->
+    0__  ______0
+       \/
+    1__/\__  __1
            \/
-        1__/\__  __1
-               \/
-        2__  __/\__2
-           \/
-        3__/\______3
+    2__  __/\__2
+       \/
+    3__/\______3
 
     """
 
     def __init__(
-        self, N=2, wg_factory=_wg_factory, mzi_factory=_mzi_factory, name=None,
+        self,
+        N=2,
+        wg_factory=_wg_factory,
+        mzi_factory=_mzi_factory,
+        name=None,
     ):
         """
         Args:
@@ -180,7 +192,7 @@ class _Capacity2ClementsNxN(Network):
 
 
 class ClementsNxN(Network):
-    r""" A unitary matrix network based on the Clements architecture.
+    r"""A unitary matrix network based on the Clements architecture.
 
     Network::
 
@@ -233,7 +245,9 @@ class ClementsNxN(Network):
         components = {}
         for i in range(capacity // 2):
             components["layer%i" % i] = _Capacity2ClementsNxN(
-                N=N, mzi_factory=mzi_factory, wg_factory=wg_factory,
+                N=N,
+                mzi_factory=mzi_factory,
+                wg_factory=wg_factory,
             )
         if capacity % 2 == 0:
             components["layer%i" % (capacity // 2)] = _PhaseArray(
@@ -241,7 +255,9 @@ class ClementsNxN(Network):
             )
         else:
             components["layer%i" % (capacity // 2)] = _MixingPhaseArrayClements(
-                self.N, mzi_factory=mzi_factory, wg_factory=wg_factory,
+                self.N,
+                mzi_factory=mzi_factory,
+                wg_factory=wg_factory,
             )
 
         # create connections
@@ -254,7 +270,7 @@ class ClementsNxN(Network):
         super(ClementsNxN, self).__init__(components, connections, name=name)
 
     def terminate(self, term=None):
-        """ Terminate open conections with the term of your choice
+        """Terminate open conections with the term of your choice
 
         Args:
             term: (Term|list|dict): Which term to use. Defaults to Term. If a

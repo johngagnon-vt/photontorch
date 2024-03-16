@@ -60,7 +60,7 @@ class DirectionalCoupler(Component):
 
     def set_S(self, S):
         t = (1 - self.coupling) ** 0.5
-        k = self.coupling ** 0.5
+        k = self.coupling**0.5
 
         # real part scattering matrix (transmission):
         S[0, :, 0, 1] = S[0, :, 1, 0] = t
@@ -152,7 +152,7 @@ class DirectionalCouplerWithLength(Component):
         delays[:] = self.ng * self.length / self.env.c
 
     def set_S(self, S):
-        kappa = self.coupling ** 0.5
+        kappa = self.coupling**0.5
         tau = (1 - self.coupling) ** 0.5
         cos_phase = torch.cos(self.phase)
         sin_phase = torch.sin(self.phase)
@@ -236,8 +236,8 @@ class RealisticDirectionalCoupler(Component):
     def set_S(self, S):
         wl = torch.tensor(self.env.wl, dtype=torch.float64, device=self.device)
         dwl = wl - self.wl0
-        dn = self.n0 + self.de1_n0 * dwl + 0.5 * self.de2_n0 * dwl ** 2
-        kappa0 = self.k0 + self.de1_k0 * dwl + 0.5 * self.de2_k0 * dwl ** 2
+        dn = self.n0 + self.de1_n0 * dwl + 0.5 * self.de2_n0 * dwl**2
+        kappa0 = self.k0 + self.de1_k0 * dwl + 0.5 * self.de2_k0 * dwl**2
         kappa1 = np.pi * dn / wl
 
         dtype = torch.get_default_dtype()

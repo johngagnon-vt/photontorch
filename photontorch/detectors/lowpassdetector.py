@@ -97,7 +97,7 @@ except ImportError:
 
 
 class LowpassDetector(Module):
-    """ Detect by lowpass filtering the signal.
+    """Detect by lowpass filtering the signal.
 
     The LowpassDetector transforms a raw optical power [W] to a detection current [A].
 
@@ -143,7 +143,7 @@ class LowpassDetector(Module):
         filter_order=None,
         responsivity=None,
     ):
-        """ detect a bitstream by low-pass filtering
+        """detect a bitstream by low-pass filtering
 
         Args:
             signal (Tensor): [W] optical power to detect.

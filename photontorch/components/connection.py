@@ -23,7 +23,7 @@ from .component import Component
 
 
 class Connection(Component):
-    """ A connection connects two ports without delays and without reflection.
+    """A connection connects two ports without delays and without reflection.
 
     Terms::
 

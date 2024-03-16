@@ -35,10 +35,11 @@ def default_components():
 ## Fixtures ##
 ##############
 
+
 ## PyTorch
 @pytest.fixture
 def gen():
-    """ default pytorch random generator """
+    """default pytorch random generator"""
     return torch.Generator(device="cpu").manual_seed(42)
 
 
@@ -47,13 +48,13 @@ def gen():
 
 @pytest.fixture
 def tenv():
-    """ default time domain environment """
+    """default time domain environment"""
     return pt.Environment(num_t=7, num_wl=2)
 
 
 @pytest.fixture
 def fenv():
-    """ default frequency domain environment """
+    """default frequency domain environment"""
     return pt.Environment(wl=np.linspace(1.5, 1.6, 100), freqdomain=True)
 
 
@@ -62,25 +63,25 @@ def fenv():
 
 @pytest.fixture
 def comp():
-    """ default base component """
+    """default base component"""
     return pt.Component()
 
 
 @pytest.fixture
 def wg():
-    """ default base waveguide """
+    """default base waveguide"""
     return pt.Waveguide()
 
 
 @pytest.fixture
 def s():
-    """ default source """
+    """default source"""
     return pt.Source()
 
 
 @pytest.fixture
 def d():
-    """ default detector """
+    """default detector"""
     return pt.Detector()
 
 
@@ -89,7 +90,7 @@ def d():
 
 @pytest.fixture
 def unw():
-    """ default unterminated network """
+    """default unterminated network"""
     with pt.Network() as nw:
         nw.wg1 = nw.wg2 = pt.Waveguide(length=5e-6)
         nw.link(1, "0:wg1:1", "0:wg2:1", 0)
@@ -98,7 +99,7 @@ def unw():
 
 @pytest.fixture
 def nw():
-    """ default network (source-waveguide-detector) """
+    """default network (source-waveguide-detector)"""
     with pt.Network() as nw:
         nw.wg = pt.Waveguide(length=1e-5)
         nw.s = pt.Source()
@@ -109,19 +110,19 @@ def nw():
 
 @pytest.fixture
 def rnw():
-    """ default ring network """
+    """default ring network"""
     return pt.RingNetwork(2, 6).terminate()
 
 
 @pytest.fixture
 def reck():
-    """ default reck network """
+    """default reck network"""
     return pt.ReckNxN(4).terminate()
 
 
 @pytest.fixture
 def clements():
-    """ default reck network """
+    """default reck network"""
     return pt.ClementsNxN(4).terminate()
 
 
@@ -131,7 +132,10 @@ def clements():
 @pytest.fixture
 def lpdet():
     return pt.LowpassDetector(
-        bitrate=40e9, samplerate=160e9, cutoff_frequency=20e9, filter_order=4,
+        bitrate=40e9,
+        samplerate=160e9,
+        cutoff_frequency=20e9,
+        filter_order=4,
     )
 
 
@@ -154,7 +158,7 @@ def photodet():
 
 @pytest.fixture
 def conn():
-    """ default connector """
+    """default connector"""
     wg = pt.Waveguide()
     s = pt.Source()
     d = pt.Detector()

@@ -21,7 +21,7 @@ from ..nn.nn import Parameter, Buffer
 
 
 class Mzi(Component):
-    r""" An MZI is a component with 4 ports.
+    r"""An MZI is a component with 4 ports.
 
     An MZI has two trainable parameters: the input phase phi and the phase difference
     between the arms theta. .

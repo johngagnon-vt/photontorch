@@ -31,7 +31,7 @@ T = 300  # [K] room temperature
 
 
 class Photodetector(LowpassDetector):
-    """ Realistic Photodector Model.
+    """Realistic Photodector Model.
 
     The photodetector transforms a raw optical power [W] to a (possibly noisy)
     detection current [A].
@@ -89,7 +89,7 @@ class Photodetector(LowpassDetector):
         dark_current=None,
         load_resistance=None,
     ):
-        """ detect a bitstream by first adding physical noise and then low-pass filtering.
+        """detect a bitstream by first adding physical noise and then low-pass filtering.
 
         Args:
             signal (Tensor): signal to detect.

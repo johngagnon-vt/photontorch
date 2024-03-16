@@ -18,9 +18,10 @@ from ..components.terms import Detector
 ## Plot ##
 ##########
 
+
 # The plot function to plot the detected power of a network
 def plot(network, detected, **kwargs):
-    """ Plot detected power versus time or wavelength
+    """Plot detected power versus time or wavelength
 
     Args:
         detected (np.ndarray|Tensor): detected power. Allowed shapes:
@@ -46,7 +47,7 @@ def plot(network, detected, **kwargs):
 
     # First we define a helper function
     def plotfunc(x, y, labels, **kwargs):
-        """ Helper function """
+        """Helper function"""
         plots = plt.plot(x, y, **kwargs)
         if labels is not None:
             for p, l in zip(plots, labels):
@@ -177,7 +178,7 @@ def plot(network, detected, **kwargs):
 
 
 def graph(network, draw=True):
-    """ create a graph visualization of the network
+    """create a graph visualization of the network
 
     Args:
         draw (bool): draw the graph with matplotlib
@@ -200,7 +201,7 @@ def graph(network, draw=True):
 
 
 def _draw_nodes(G, components, pos):
-    """ helper function: draw the nodes of a networkx graph of a photontorch network
+    """helper function: draw the nodes of a networkx graph of a photontorch network
 
     Args:
         G (graph): networkx graph to draw
@@ -257,7 +258,7 @@ def _draw_nodes(G, components, pos):
 
 
 def _draw_edges(G, pos):
-    """ helper function: draw the edges of a networkx graph of a photontorch network
+    """helper function: draw the edges of a networkx graph of a photontorch network
 
     Args:
         G (graph): networkx graph to draw

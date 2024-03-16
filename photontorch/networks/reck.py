@@ -8,6 +8,7 @@ Reference:
     https://journals.aps.org/prl/abstract/10.1103/NhysRevLett.73.58
 
 """
+
 #############
 ## Imports ##
 #############
@@ -29,10 +30,14 @@ from ..components.terms import Source, Detector, Term
 
 
 class _ReckNxN(Network):
-    """ A helper network for ReckNxN """
+    """A helper network for ReckNxN"""
 
     def __init__(
-        self, N=2, wg_factory=_wg_factory, mzi_factory=_mzi_factory, name=None,
+        self,
+        N=2,
+        wg_factory=_wg_factory,
+        mzi_factory=_mzi_factory,
+        name=None,
     ):
         """
         Args:
@@ -72,7 +77,7 @@ class _ReckNxN(Network):
 
 
 class ReckNxN(Network):
-    """ A unitary matrix network based on the Reck Network.
+    """A unitary matrix network based on the Reck Network.
 
     Network::
 
@@ -107,7 +112,11 @@ class ReckNxN(Network):
     """
 
     def __init__(
-        self, N=2, wg_factory=_wg_factory, mzi_factory=_mzi_factory, name=None,
+        self,
+        N=2,
+        wg_factory=_wg_factory,
+        mzi_factory=_mzi_factory,
+        name=None,
     ):
         """
         Args:
@@ -141,7 +150,7 @@ class ReckNxN(Network):
         super(ReckNxN, self).__init__(components, connections, name=name)
 
     def terminate(self, term=None):
-        """ Terminate open conections with the term of your choice
+        """Terminate open conections with the term of your choice
 
         Args:
             term: (Term|list|dict): Which term to use. Defaults to Term. If a

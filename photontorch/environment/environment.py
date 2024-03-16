@@ -37,14 +37,14 @@ _current_environments = deque()
 
 
 class _DefaultArgument:
-    """ wrap default function arguments in this class to figure out if argument
+    """wrap default function arguments in this class to figure out if argument
     was supplied manually or due to being there by defualt."""
 
     pass
 
 
 class _float(float, _DefaultArgument):
-    """ wrap default float function arguments in this class to figure out if
+    """wrap default float function arguments in this class to figure out if
     argument was supplied manually or due to being there by defualt."""
 
     def __repr__(self):
@@ -52,28 +52,28 @@ class _float(float, _DefaultArgument):
 
 
 class _int(int, _DefaultArgument):
-    """ wrap default int function arguments in this class to figure out if
+    """wrap default int function arguments in this class to figure out if
     argument was supplied manually or due to being there by defualt."""
 
     pass
 
 
 class _bool(int, _DefaultArgument):
-    """ wrap default bool function arguments in this class to figure out if
+    """wrap default bool function arguments in this class to figure out if
     argument was supplied manually or due to being there by defualt."""
 
     pass
 
 
 class _str(str, _DefaultArgument):
-    """ wrap default string function arguments in this class to figure out if
+    """wrap default string function arguments in this class to figure out if
     argument was supplied manually or due to being there by defualt."""
 
     pass
 
 
 class _Array(np.ndarray):
-    """ numpy array with more concise repr """
+    """numpy array with more concise repr"""
 
     def __repr__(self):
         if self.ndim != 1:
@@ -98,21 +98,21 @@ class _Array(np.ndarray):
 
 
 class _DefaultArray(_Array, _DefaultArgument):
-    """ wrap default numpy array function arguments in this class to figure out
+    """wrap default numpy array function arguments in this class to figure out
     if argument was supplied manually or due to being there by defualt."""
 
     pass
 
 
 def _array(arr, default_array=False):
-    """ create either an _Array or a _DefaultArray. """
+    """create either an _Array or a _DefaultArray."""
     if default_array:
         return np.asarray(arr).view(_DefaultArray)
     return np.asarray(arr).view(_Array)
 
 
 def _arange(start, stop, step, default_array=False):
-    """ create an arange """
+    """create an arange"""
     num = int((stop - start) / step)
     if num == 0:
         return _array([start])
@@ -123,12 +123,12 @@ def _arange(start, stop, step, default_array=False):
 
 
 def _is_default(arg):
-    """ check if a certain value is a default argument """
+    """check if a certain value is a default argument"""
     return isinstance(arg, _DefaultArgument) or arg is None
 
 
 def _convert_default(value):
-    """ convert any value to a default argument """
+    """convert any value to a default argument"""
     if isinstance(value, bool):
         return _bool(value)
     elif isinstance(value, int):
@@ -149,7 +149,7 @@ def _convert_default(value):
 
 
 class Environment(object):
-    """ Simulation Environment
+    """Simulation Environment
 
     The simulation environment is a smart data class that contains all
     the necessary parameters to initialize a network for a simulation.
@@ -420,7 +420,7 @@ class Environment(object):
         self._initialized = True
 
     def copy(self, **kwargs):
-        """ Create a copy of the environment
+        """Create a copy of the environment
 
         Note:
             This copy method accepts the same keyword arguments as the
@@ -472,7 +472,7 @@ class Environment(object):
         return self
 
     def __exit__(self, error, value, traceback):
-        """ exit the with block (close the current environment) """
+        """exit the with block (close the current environment)"""
         if _current_environments[0] is self:
             del _current_environments[0]
         self._grad_manager.__exit__(error, value, traceback)
@@ -551,7 +551,7 @@ class Environment(object):
         return html
 
     def __setattr__(self, name, value):
-        """ this locks the attributes """
+        """this locks the attributes"""
         if hasattr(self, "_initialized") and self._initialized:
             raise AttributeError(
                 "Changing the attributes of an environment is not allowed. "
@@ -561,7 +561,7 @@ class Environment(object):
             super(Environment, self).__setattr__(name, value)
 
     def __setitem__(self, name, value):
-        """ this locks the attributes """
+        """this locks the attributes"""
         if hasattr(self, "_initialized") and self._initialized:
             raise AttributeError(
                 "Changing the attributes of an environment is not allowed. "
@@ -577,7 +577,7 @@ class Environment(object):
 
 
 def current_environment():
-    """ get the current environment """
+    """get the current environment"""
     if _current_environments:
         return _current_environments[0]
     else:
@@ -589,7 +589,7 @@ def current_environment():
 
 
 def set_environment(*args, **kwargs):
-    """ set the environment globally
+    """set the environment globally
 
     Args:
         env (Environment): The environment to set globally.

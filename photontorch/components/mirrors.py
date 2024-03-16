@@ -18,7 +18,7 @@ from ..nn.nn import BoundedParameter
 
 
 class Mirror(Component):
-    """ Mirrors are partly reflecting and partly transmitting connections.
+    """Mirrors are partly reflecting and partly transmitting connections.
 
     A mirror has one trainable parameter: the reflectivity R.
 
@@ -48,7 +48,7 @@ class Mirror(Component):
         )
 
     def set_S(self, S):
-        r = self.R ** 0.5
+        r = self.R**0.5
         t = (1 - self.R) ** 0.5
 
         # real part

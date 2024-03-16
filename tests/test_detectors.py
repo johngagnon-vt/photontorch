@@ -32,7 +32,10 @@ def scipy_detect(x, bitrate, samplerate, cutoff_frequency=20e9, filter_order=4):
 
 def test_lowpass_detector_creation(lpdet):
     pt.LowpassDetector(
-        bitrate=40e9, samplerate=160e9, cutoff_frequency=20e9, filter_order=4,
+        bitrate=40e9,
+        samplerate=160e9,
+        cutoff_frequency=20e9,
+        filter_order=4,
     )
 
 
