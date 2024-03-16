@@ -9,6 +9,7 @@ import torch
 
 ## Other
 import numpy as np
+from scipy.interpolate import interp1d
 
 ## Relative
 from .component import Component
@@ -79,13 +80,14 @@ class Mzij(Component):
         self.theta = parameter(
             torch.tensor(theta, dtype=torch.float64, device=self.device)
         )
-        if S:
-            self.set_S(S)
+        if S != None:
+            self.S = S
 
     def set_delays(self, delays):
         delays[:] = self.ng * self.length / self.env.c
 
     def set_S(self, S):
+        # https://stackoverflow.com/questions/35929602/i-need-to-linearly-interpolate-a-numpy-array-of-dimension-nx3x3
         wls = torch.tensor(self.env.wl, dtype=torch.float64, device=self.device)
 
         # neff depends on the wavelength:
@@ -100,20 +102,29 @@ class Mzij(Component):
         sin_phi1 = torch.sin(phi1).to(torch.get_default_dtype())
         cos_theta = torch.cos(self.theta).to(torch.get_default_dtype())
         sin_theta = torch.sin(self.theta).to(torch.get_default_dtype())
-        # scattering matrix
-        S[0, :, 0, 1] = S[0, :, 1, 0] = cos_phi1 * cos_theta
-        S[1, :, 0, 1] = S[1, :, 1, 0] = sin_phi1 * cos_theta
-        S[0, :, 0, 2] = S[0, :, 2, 0] = cos_phi1 * sin_theta
-        S[1, :, 0, 2] = S[1, :, 2, 0] = sin_phi1 * sin_theta
-        S[0, :, 1, 3] = S[0, :, 3, 1] = -cos_phi0 * sin_theta
-        S[1, :, 1, 3] = S[1, :, 3, 1] = -sin_phi0 * sin_theta
-        S[0, :, 2, 3] = S[0, :, 3, 2] = cos_phi0 * cos_theta
-        S[1, :, 2, 3] = S[1, :, 3, 2] = sin_phi0 * cos_theta
+
+        if self.S == None:
+            # scattering matrix original
+            S[0, :, 0, 1] = S[0, :, 1, 0] = cos_phi1 * cos_theta
+            S[1, :, 0, 1] = S[1, :, 1, 0] = sin_phi1 * cos_theta
+            S[0, :, 0, 2] = S[0, :, 2, 0] = cos_phi1 * sin_theta
+            S[1, :, 0, 2] = S[1, :, 2, 0] = sin_phi1 * sin_theta
+
+            S[0, :, 1, 3] = S[0, :, 3, 1] = -cos_phi0 * sin_theta
+            S[1, :, 1, 3] = S[1, :, 3, 1] = -sin_phi0 * sin_theta
+            S[0, :, 2, 3] = S[0, :, 3, 2] = cos_phi0 * cos_theta
+            S[1, :, 2, 3] = S[1, :, 3, 2] = sin_phi0 * cos_theta
+        else:
+            S = self.S
         # return scattering matrix
 
         # add loss
         loss = self.loss * self.length
+        print(S.size())
         print(S)
+
+        breakpoint()
+        torch.Size([2, 1, 4, 4])
         return S * 10 ** (-loss / 20)  # 20 bc loss is defined on power.
 
     def action(self, t, x_in, x_out):
