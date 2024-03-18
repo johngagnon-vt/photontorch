@@ -120,8 +120,6 @@ class Mzij(Component):
 
         # add loss
         loss = self.loss * self.length
-        print(S.size())
-        print(S)
 
         breakpoint()
         torch.Size([2, 1, 4, 4])
