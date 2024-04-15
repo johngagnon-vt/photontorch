@@ -58,6 +58,10 @@ from .components.mmis import Mmi
 from .components.mzis import Mzi
 from .components.mzij import Mzij
 
+
+# MZMs
+from .components.mzm import Mzm
+
 # Waveguides
 from .components.waveguides import Waveguide
 from .components.waveguides import Connection
@@ -86,6 +90,10 @@ from .networks.reck import ReckNxN
 
 # Clements Network
 from .networks.clements import ClementsNxN
+
+# matrix vecotr multiplier Network
+from .networks.MVM import MVMNxN
+
 
 
 ## Environment

@@ -57,7 +57,7 @@ class Mmi(Component):
         # validate weights
         if weights is None:
             weights = np.sqrt(0.5 * np.ones((1, 2)))
-
+        
         if len(weights.shape) != 2 and len(weights.shape) != 3:
             raise ValueError(
                 "weights should be at least 2D and at most 3D [first index real|imag]."

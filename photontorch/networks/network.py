@@ -138,6 +138,7 @@ class Network(Component):
             self.connections += connections
 
         # register connection/components:
+        
         self._set_buffers()
 
     # add a component to the network
@@ -298,6 +299,7 @@ class Network(Component):
 
         # add components to components dict
         self.components = OrderedDict()
+        #print(self._get_used_component_names())
         for name in self._get_used_component_names():
             self.components[name] = all_components[name]
             self.components[name].name = name
@@ -1015,8 +1017,8 @@ class Network(Component):
 
         """
         return plot(self, detected, **kwargs)
-
-    def graph(self, draw=True):
+    import networkx as nx
+    def graph(self,layout = nx.spring_layout, draw=True):
         """create a graph visualization of the network
 
         Args:

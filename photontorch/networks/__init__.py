@@ -21,3 +21,7 @@ from .reck import ReckNxN
 
 # Clements Network
 from .clements import ClementsNxN
+
+
+# matrix vector multiplier Network
+from .MVM import MVMNxN
