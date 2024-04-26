@@ -135,5 +135,3 @@ class MVMNxN(Network):
         ret.to(self.device)
         return ret
         
-
-    
