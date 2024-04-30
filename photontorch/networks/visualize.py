@@ -7,6 +7,7 @@
 # Torch
 import torch
 
+import re
 # Other
 import numpy as np
 
@@ -175,32 +176,140 @@ def plot(network, detected, **kwargs):
         "current simulation environment corresponds to the environment for "
         "which the detected tensor was calculated?"
     )
-
-
-def graph(network, draw=True):
-    """create a graph visualization of the network
+    
+import networkx as nx
+def graph(network,layout = nx.spring_layout, draw=True):
+    """Create a graph visualization of the network, starting from each component up.
 
     Args:
-        draw (bool): draw the graph with matplotlib
+        network: The network to visualize.
+        draw (bool): Draw the graph with matplotlib.
 
+    Returns:
+        nx.MultiGraph: The networkx MultiGraph object representing the network.
     """
-    import networkx as nx
+    
     import matplotlib.pyplot as plt
 
-    # create graph
+
+    def add_nodes_recursively(G,component,component_name,Nodes,Connections,parents=list()): 
+        
+        if component and hasattr(component, 'components'):
+
+            cop1 = list(parents)
+            cop1.append(component.name)
+            for child in component.components:
+
+                add_nodes_recursively(G, component.components.get(child),child,Nodes,Connections, cop1)  # Recursively add nodes
+                
+                
+                
+            for connection in component.connections:
+                con = connection.split(":")
+                if (len(con)==3):
+                    Connections.append(((cop1+[con[0]],con[1]),(cop1,con[2])))
+                else:
+                    Connections.append(((cop1+[con[0]],con[1]),(cop1+[con[2]],con[3])))
+
+                    
+        else:
+            
+            if component not in Nodes:
+                
+                
+                copy = list(parents)
+                copy.append(component_name)
+                Nodes.append(copy)
+                
+                
+    def fix_connections(connections,nodes):
+        connections_dict = {}
+
+        # Construct the dictionary of second elements and their corresponding first elements
+        for pair in connections:
+            first,second = pair
+            connections_dict[tuple((tuple(first[0]),first[1]))]=tuple((tuple(second[0]),second[1]))
+        output=list()
+        # Iterate through the connections and fix any duplicates
+        for first in reversed(connections_dict.keys()):
+            first = tuple((tuple(first[0]),first[1]))
+            second = connections_dict.get(first)
+            second = tuple((tuple(second[0]),second[1]))
+            flag = True
+            
+            for i,value in enumerate(output):
+                
+                if (first == value[0]):
+                    output[i][0] = second
+                    flag = False
+                elif (first == value[1]):
+                    output[i][1] = second
+                    flag = False
+                elif (second == value[0]):
+                    output[i][0] = first
+                    flag = False
+                elif (second == value[1]):
+                    output[i][1] = first
+                    flag = False
+
+                
+            if(flag):
+                output.append([first,second])
+            
+            flag = True
+        
+        node_tuples = [tuple(node) for node in Nodes]
+        if ('recknxn_terminated', 'recknxn', 'wg') in node_tuples:
+            node_tuples.remove(('recknxn_terminated', 'recknxn', 'wg'))
+        
+        output_a = [pair for pair in output if pair[0][0] in node_tuples and pair[1][0] in node_tuples]
+        dels = [pair for pair in output if pair not in output_a]
+        
+        middle_index = len(dels) // 2
+        first_set = dels[:middle_index]
+        second_set = dels[middle_index:]
+
+        combined_list = [(first_set[i][0], second_set[i][0]) for i in range(len(first_set))]
+        output_a = output_a+combined_list
+        
+        return output_a
+
+
+    # Create graph
     G = nx.MultiGraph()
-    G.add_nodes_from(network.components.keys())
-    G.add_edges_from([conn.split(":")[::2] for conn in network.connections])
+    Nodes=list()
+    Connections=list()
+    add_nodes_recursively(G, network,network.name,Nodes,Connections)    
+    Connections = fix_connections(Connections,Nodes)
+    node_names = ['_'.join(sublist) for sublist in Nodes]
+    if 'recknxn_terminated_recknxn_wg' in node_names:
+        node_names.remove('recknxn_terminated_recknxn_wg')
+
+
+    G.add_nodes_from(node_names)
+
+    connection_names = [[pair[0] for pair in sublist] for sublist in Connections]
+    connection_names_2 = [['_'.join(sublist[0]),'_'.join(sublist[1])] for sublist in connection_names]
+    G.add_edges_from(connection_names_2)
 
     if draw:
-        pos = nx.drawing.spring_layout(G)
-        _draw_nodes(G, network.components.values(), pos)
+        pos = layout(G)
+        for node in pos:
+            pos[node]=np.sign(pos[node])*np.power(np.abs(pos[node]),1/4)*5
+        plt.figure(figsize=(10, 10))
+        _draw_nodes(G, Nodes, pos)
         _draw_edges(G, pos)
+        
         plt.gca().set_axis_off()
+        plt.draw()
+        plt.show()
+
     return G
 
 
-def _draw_nodes(G, components, pos):
+import numpy as np
+
+def _draw_nodes(G, Nodes, pos):
     """helper function: draw the nodes of a networkx graph of a photontorch network
 
     Args:
@@ -212,48 +321,32 @@ def _draw_nodes(G, components, pos):
     import matplotlib.pyplot as plt
 
     nodelist = list(G)
-    node_size = 300
+    node_size = 20
     node_color = "r"
     node_shape = "o"
     xy = np.asarray([pos[v] for v in nodelist])
 
-    def _get_bbox_properties(cls):
-        dic = {
-            None: {"fc": "C1"},
-            "object": {"fc": "C1"},
-            "Component": {"fc": "C1"},
-            "Waveguide": None,
-            "Connection": None,
-            "DirectionalCoupler": {"fc": "C0"},
-            "DirectionalCouplerWithLength": {"fc": "C0"},
-            "RealisticDirectionalCoupler": {"fc": "C0"},
-            "Term": None,
-            "Source": {"fc": "C3"},
-            "Detector": {"fc": "C2"},
-            "Mirror": {"fc": "C0"},
-            "GratingCoupler": {"fc": "C6"},
-            "Soa": {"fc": "C4"},
-        }
-        bbox = dic.get(cls.__name__, -1)
-        if bbox == -1:
-            return _get_bbox_properties(cls.__bases__[0])
-        if bbox is None:
-            return bbox
-
-        bbox["ec"] = bbox.get("ec", bbox.get("fc"))
-
-        return bbox
-
-    for (x, y), node, comp in zip(xy, nodelist, components):
-        # plt.scatter(xy[:, 0], xy[:, 1], s=node_size, c=node_color, marker=node_shape, zorder=2)
+    pattern_mzi = re.compile(r"mzi(\d+)$")
+    pattern_wg = re.compile(r"wg(\d+)?$")
+    
+    for (x, y), node, comp in zip(xy, nodelist, Nodes):
+                
+        node_color = "y"
+        if (pattern_mzi.search(node)):
+            node_color = "r"
+        if (pattern_wg.search(node)):
+            node_color = "k"
+        
+        plt.scatter(x, y, s=node_size, c=node_color, marker=node_shape, zorder=2)
+        
         text = plt.text(
             x,
-            y,
+            y+.1,
             node,
             zorder=2,
             horizontalalignment="center",
             verticalalignment="center",
-            bbox=_get_bbox_properties(comp.__class__),
+            fontsize=8,
         )
 
 
@@ -276,7 +369,7 @@ def _draw_edges(G, pos):
     for (x1, y1), (x2, y2) in edge_pos:
         r = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
         a = np.arctan2((y2 - y1), (x2 - x1))
-        a += (2 * np.random.rand() - 1) * np.pi / 4
+        #a += (2 * np.random.rand() - 1) * np.pi / 4
         plt.plot(
             [x1, x1 + 0.5 * r * np.cos(a), x2],
             [y1, y1 + 0.5 * r * np.sin(a), y2],
@@ -285,4 +378,4 @@ def _draw_edges(G, pos):
             color="k",
             zorder=1,
         )
-    plt.draw()
+    

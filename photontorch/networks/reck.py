@@ -21,9 +21,16 @@ from .network import Network
 from .clements import _wg_factory, _mzi_factory
 
 from ..components.mzis import Mzi
+from ..components.mzij import Mzij
 from ..components.terms import Source, Detector, Term
 
-
+def _mzij_factory():
+    return Mzij(
+        phi=2 * np.pi * np.random.rand(),
+        theta=2 * np.pi * np.random.rand(),
+        trainable=True,
+    )
+    
 #############
 ## Classes ##
 #############
@@ -36,7 +43,7 @@ class _ReckNxN(Network):
         self,
         N=2,
         wg_factory=_wg_factory,
-        mzi_factory=_mzi_factory,
+        mzi_factory=_mzij_factory,
         name=None,
     ):
         """
@@ -115,7 +122,7 @@ class ReckNxN(Network):
         self,
         N=2,
         wg_factory=_wg_factory,
-        mzi_factory=_mzi_factory,
+        mzi_factory=_mzij_factory,
         name=None,
     ):
         """

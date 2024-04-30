@@ -22,31 +22,30 @@ from ..nn.nn import Parameter, Buffer
 #########################
 
 
-class Mzij(Component):
-    r"""An MZI is a component with 4 ports.
+class Mzm(Component):
+    """An MZm is a component with 2 ports.
 
-    An MZI has two trainable parameters: the input phase phi and the phase difference
-    between the arms theta. .
+    
 
     Terms::
 
                     _[2*theta]_
-        3  ______  /           \  ___2
-                 \/             \/
-        0__[phi]_/\_____________/\___1
+          _______  /           \  ___
+      0__/       \/             \/    \____1
+         \_______/\_____________/\___/
 
     Note:
-        This MZI implementation assumes the armlength difference is too small to have
+        This MZM implementation assumes the armlength difference is too small to have
         a noticable delay difference between the arms, i.e. only the phase difference matters
 
     """
 
-    num_ports = 4
+    num_ports = 2
 
     def __init__(
         self,
         phi=0,
-        theta=np.pi / 4,
+        theta=0,
         neff=2.34,
         ng=3.40,
         wl0=1.55e-6,
@@ -55,6 +54,7 @@ class Mzij(Component):
         trainable=True,
         normalize = True,
         debug_print = False,
+        print_phase=False,
         name=None,
         S=None,
     ):
@@ -70,10 +70,10 @@ class Mzij(Component):
             trainable (bool): whether phi and theta are trainable
             name (optional, str): name of this specific MZI
         """
-        super(Mzij, self).__init__(name=name)
+        super(Mzm, self).__init__(name=name)
 
         parameter = Parameter if trainable else Buffer
-
+        self.print_phase = print_phase
         self.ng = float(ng)
         self.neff = float(neff)
         self.length = float(length)
@@ -91,9 +91,6 @@ class Mzij(Component):
     def set_delays(self, delays):
         delays[:] = self.ng * self.length / self.env.c
         
-        
-        
-        
     def get_voltage_index(self,target_value):
         
         
@@ -104,10 +101,8 @@ class Mzij(Component):
         lookup_tables_directory = os.path.join(current_directory, 'lookup_tables')
         file_path = os.path.join(lookup_tables_directory, 'Heater_Voltage_to_theta.txt')
         values = np.loadtxt(file_path)
-        
-        target_value=target_value%(2*np.pi)+values[0]
-        
-        
+        target_value = (target_value+values[0])
+        #(target_value-values[0])%(2*np.pi)+values[0]#putting  the value from min to min+2pi
         closest_index = np.abs(values - target_value).argmin()
         return closest_index
     
@@ -152,20 +147,13 @@ class Mzij(Component):
             
             phi1=np.arctan2(sin_phi2,cos_phi1)
 
-
-
         
         
         fixed_out1 = [np.sign(out1[0])*np.abs(np.cos(phi1+phi) * cos_theta1),
-                      np.sign(out1[1])*np.abs(np.sin(phi1+phi) * cos_theta1)]
+                      np.sign(out1[1])*np.abs(np.sin(phi1+phi) * cos_theta1)]#doing this just to ensure signs, as the sin,cos may be outside of its quadrants
         
         fixed_out2 = [np.sign(out2[0])*np.abs(np.cos(phi2+phi) * sin_theta2),
-                      np.sign(out2[1])*np.abs(np.sin(phi2+phi) * sin_theta2)]
-        
-        
-
-        
-        
+                      np.sign(out2[1])*np.abs(np.sin(phi2+phi) * sin_theta2)]#doing this just to ensure signs, as the sin,cos may be outside of its quadrants
         
     
         if (self.debug_print == True):
@@ -173,6 +161,7 @@ class Mzij(Component):
             
             sin_phi1 = np.sin(phi1)
             sin_phi2 = np.sin(phi2)
+            
             
             cos_theta1b = 100*out1[1]/sin_phi1/np.pi
             sin_theta2b = -100*out2[1]/sin_phi2/np.pi
@@ -200,43 +189,49 @@ class Mzij(Component):
             print("-----------------------------------------")
         
         
-        return fixed_out1,fixed_out2
-        
+        return fixed_out1,fixed_out2    
         
         
             
     
     def set_S(self, S):
         
-
-        theta = float(self.theta)#%(2*np.pi)
+        A = np.zeros((2, 4, 4))
+        theta = float(self.theta)
         index = self.get_voltage_index(theta)
         in1_out1,in1_out2=self.normalize_loss([self.get_value_at_index('in1_out1_re.txt',index),self.get_value_at_index('in1_out1_im.txt',index)],
                                               [self.get_value_at_index('in1_out2_re.txt',index),self.get_value_at_index('in1_out2_im.txt',index)],
                                               0)
-        S[0, :, 2, 3] = S[0, :, 3, 2] = in1_out1[0]
-        S[0, :, 1, 3] = S[0, :, 3, 1] = in1_out2[0]
-        S[1, :, 1, 3] = S[1, :, 3, 1] = in1_out2[1]
-        S[1, :, 2, 3] = S[1, :, 3, 2] = in1_out1[1]
+        A[0, 2, 3] = in1_out1[0]
+        A[0, 1, 3] = in1_out2[0]
+        A[1, 1, 3] = in1_out2[1]
+        A[1, 2, 3] = in1_out1[1]
         
         in2_out1,in2_out2=self.normalize_loss([self.get_value_at_index('in2_out1_re.txt',index),self.get_value_at_index('in2_out1_im.txt',index)],
                                               [self.get_value_at_index('in2_out2_re.txt',index),self.get_value_at_index('in2_out2_im.txt',index)],
-                                              float(self.phi))
-        S[0, :, 0, 2] = S[0, :, 2, 0] = in2_out1[0]
-        S[0, :, 0, 1] = S[0, :, 1, 0] = in2_out2[0]
-        S[1, :, 0, 1] = S[1, :, 1, 0] = in2_out2[1]
-        S[1, :, 0, 2] = S[1, :, 2, 0] = in2_out1[1]
+                                              0)
+        A[0, 0, 2] = in2_out1[0]
+        A[0, 0, 1] = in2_out2[0]
+        A[1, 0, 1] = in2_out2[1]
+        A[1, 0, 2] = in2_out1[1]
+
+
+        #print("A",A)
+
+        out_real = np.sum(A[0,:,:])/2
+        out_im =np.sum(A[1,:,:])/2
         
-        #print("S",S)
-
-
-        breakpoint()
-        torch.Size([2, 1, 4, 4])
+        S[0,:,0,1] = S[0,:,1,0] = out_real
+        S[1,:,0,1] = S[1,:,1,0] = out_im
+        if self.print_phase:
+            print(np.arctan2(out_im,out_real))
+        torch.Size([2, 1, 2, 2])
+        
+        
+        
         return S# * 10 ** (-loss / 20)  # 20 bc loss is defined on power.
 
-    
-        
-        
+
         
         
     def action(self, t, x_in, x_out):

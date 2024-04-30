@@ -16,6 +16,7 @@ import numpy as np
 # relative
 from .network import Network
 from ..components.mzis import Mzi
+from ..components.mzij import Mzij
 from ..components.waveguides import Waveguide
 from ..components.terms import Source, Detector
 
@@ -30,10 +31,12 @@ def _wg_factory():
 
 
 def _mzi_factory():
-    return Mzi(
+    return Mzij(
         phi=2 * np.pi * np.random.rand(),
         theta=2 * np.pi * np.random.rand(),
         trainable=True,
+        normalize = True,
+        debug_print=False,
     )
 
 
@@ -192,7 +195,7 @@ class _Capacity2ClementsNxN(Network):
 
 
 class ClementsNxN(Network):
-    r"""A unitary matrix network based on the Clements architecture.
+    """A unitary matrix network based on the Clements architecture.
 
     Network::
 

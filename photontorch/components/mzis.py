@@ -47,7 +47,7 @@ class Mzi(Component):
         theta=np.pi / 4,
         neff=2.34,
         ng=3.40,
-        wl0=1.55e-6,
+        wl0=1.5536e-6,
         length=1e-5,
         loss=0,
         trainable=True,
